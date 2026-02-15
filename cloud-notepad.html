@@ -18,34 +18,47 @@
     }
 
     :root {
-      --bg-primary: #000000;
-      --bg-secondary: #0a0a0f;
-      --bg-tertiary: #111118; 
-      --bg-panel: #16161f;
-      --bg-elevated: #1c1c28;
+      --bg-primary: #06060a;
+      --bg-secondary: #0c0c14;
+      --bg-tertiary: #12121c;
+      --bg-panel: #14142080;
+      --bg-elevated: #1a1a2e;
+      --bg-input: #0e0e18;
 
-      --accent-blue: #2563eb;
-      --accent-blue-light: #3b82f6;
-      --accent-blue-dark: #1e40af;
-      --accent-cyan: #06b6d4;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dark: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.15);
+      --accent-cyan: #22d3ee;
+      --accent-emerald: #34d399;
+      --accent-rose: #fb7185;
 
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --text-muted: #64748b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+      --text-dim: #334155;
 
-      --border-subtle: #1e293b;
-      --border-focus: #3b82f6;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-hover: rgba(99, 102, 241, 0.3);
+      --border-focus: rgba(99, 102, 241, 0.5);
 
-      --success: #10b981;
+      --success: #22c55e;
       --error: #ef4444;
       --warning: #f59e0b;
+      --info: #6366f1;
 
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.6);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.7), 0 4px 6px -4px rgb(0 0 0 / 0.7);
-      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.8), 0 8px 10px -6px rgb(0 0 0 / 0.8);
-      --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.2);
-      --shadow-glow-strong: 0 0 40px rgba(37, 99, 235, 0.35);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html {
+      scrollbar-color: var(--bg-elevated) var(--bg-secondary);
     }
 
     body {
@@ -56,499 +69,629 @@
       min-height: 100vh;
       overflow-x: hidden;
       font-weight: 500;
+      position: relative;
     }
 
-    /* Glass morphism effect */
-    .glass {
-      background: rgba(22, 22, 31, 0.7);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    /* Ambient Background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(99, 102, 241, 0.08), transparent 60%),
+        radial-gradient(ellipse 60% 60% at 80% 80%, rgba(34, 211, 238, 0.05), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(251, 113, 133, 0.03), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
     }
+
+    body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-elevated);
+      border-radius: 100px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-dark); }
+
+    .hidden { display: none !important; }
 
     /* Header */
     .header {
-      background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(10, 10, 15, 0.95) 100%);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 2rem 2.5rem;
+      background: rgba(6, 6, 10, 0.7);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      height: 64px;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
     }
 
     .header-content {
       max-width: 1800px;
+      width: 100%;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .app-title {
-      font-family: 'Space Grotesk', 'Inter', sans-serif;
-      font-size: 2.25rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #f8fafc 0%, #3b82f6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-transform: uppercase;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
     }
 
-    .app-subtitle {
-      font-size: 0.75rem;
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-cyan) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
+    }
+
+    .brand-icon svg { width: 20px; height: 20px; color: white; }
+
+    .brand-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .brand-text p {
+      font-size: 0.625rem;
       color: var(--text-muted);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-top: 0.375rem;
+      letter-spacing: 0.15em;
+      margin-top: -1px;
     }
 
-    /* Status Badge */
-    .status-badge {
-      display: inline-flex;
+    .header-actions {
+      display: flex;
       align-items: center;
-      gap: 0.625rem;
-      padding: 0.625rem 1.25rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 800;
+      gap: 0.75rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.875rem;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
       background: var(--text-muted);
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      box-shadow: 0 0 8px currentColor;
+      transition: all var(--transition);
     }
 
     .status-dot.connected {
       background: var(--success);
-      box-shadow: 0 0 12px var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse-glow 2s infinite;
     }
 
-    @keyframes pulse {
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 6px var(--success); }
+      50% { box-shadow: 0 0 14px var(--success), 0 0 4px var(--success); }
+    }
 
-      0%,
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .kbd-hint {
+      display: none;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
 
-      50% {
-        opacity: 0.6;
-        transform: scale(0.95);
-      }
+    .kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.625rem;
+      font-weight: 600;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--text-secondary);
+    }
+
+    @media (min-width: 1024px) {
+      .kbd-hint { display: flex; }
     }
 
     /* Main Layout */
     .main-container {
       max-width: 1800px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.25rem;
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 2rem;
-      min-height: calc(100vh - 120px);
+      grid-template-columns: 1fr 360px;
+      gap: 1.25rem;
+      min-height: calc(100vh - 64px);
     }
 
-    /* Editor Panel */
+    /* Editor Section */
     .editor-section {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
+      min-width: 0;
     }
 
+    /* Panel Base */
     .panel {
       background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: 1.25rem;
-      padding: 2rem;
-      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
       position: relative;
-      overflow: hidden;
+      transition: border-color var(--transition);
     }
 
-    .panel::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .panel:hover::before {
-      opacity: 1;
+    .panel:hover {
+      border-color: rgba(255, 255, 255, 0.08);
     }
 
     .panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .panel-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-primary);
-    }
-
-    /* Control Panel */
-    .control-panel {
-      background: var(--bg-secondary);
-    }
-
-    .input-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .input-label {
-      display: block;
       font-size: 0.8125rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    .input-field {
-      width: 100%;
-      padding: 0.875rem 1.125rem;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 0.875rem;
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      font-family: 'JetBrains Mono', monospace;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
-    }
-
-    .input-field:focus {
-      outline: none;
-      border-color: var(--accent-blue-light);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--shadow-glow), inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
-      background: var(--bg-panel);
-      transform: translateY(-1px);
-    }
-
-    .input-field::placeholder {
-      color: var(--text-muted);
-      opacity: 0.6;
-    }
-
-    /* Grid inputs */
-    .input-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    /* Buttons */
-    .button-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
-
-    .btn {
-      padding: 0.875rem 1.75rem;
-      border: none;
-      border-radius: 9999px;
-      font-size: 0.8125rem;
-      font-weight: 900;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    .panel-title svg {
+      width: 16px;
+      height: 16px;
+      opacity: 0.5;
     }
 
-    .btn:hover::before {
-      opacity: 1;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--accent-blue-dark) 100%);
-      color: white;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      box-shadow: var(--shadow-md), 0 0 0 1px rgba(59, 130, 246, 0.1);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      box-shadow: var(--shadow-lg), var(--shadow-glow-strong);
-      transform: translateY(-2px);
-      border-color: rgba(59, 130, 246, 0.5);
-    }
-
-    .btn-secondary {
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      border: 1px solid var(--border-subtle);
-      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    }
-
-    .btn-secondary:hover:not(:disabled) {
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--text-muted);
       background: var(--bg-tertiary);
-      border-color: rgba(59, 130, 246, 0.4);
-      box-shadow: var(--shadow-md), 0 0 20px rgba(59, 130, 246, 0.1);
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
     }
 
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-      color: white;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      box-shadow: var(--shadow-md), 0 0 0 1px rgba(239, 68, 68, 0.1);
-    }
-
-    .btn-danger:hover:not(:disabled) {
-      box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.3);
-      transform: translateY(-2px);
-    }
-
-    .btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    .btn-full {
-      grid-column: 1 / -1;
-    }
-
-    /* File Input Button */
-    .file-input-wrapper {
-      position: relative;
-      overflow: hidden;
-      display: inline-block;
-      width: 100%;
-    }
-
-    .file-input-wrapper input[type=file] {
-      position: absolute;
-      left: -9999px;
-    }
-
-    /* Editor Textarea */
+    /* Editor Panel */
     .editor-panel {
       flex: 1;
-      min-height: 500px;
+      display: flex;
+      flex-direction: column;
     }
 
     .editor-textarea {
+      flex: 1;
       width: 100%;
-      min-height: 500px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-subtle);
-      border-radius: 1rem;
-      padding: 1.75rem;
+      min-height: 520px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
       color: var(--text-primary);
       font-family: 'JetBrains Mono', 'Courier New', monospace;
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
       line-height: 1.8;
       resize: vertical;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
 
     .editor-textarea:focus {
       outline: none;
-      border-color: var(--accent-blue-light);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--shadow-glow), inset 0 2px 8px 0 rgba(0, 0, 0, 0.4);
-      background: var(--bg-tertiary);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow), inset 0 0 40px rgba(99, 102, 241, 0.02);
     }
 
     .editor-textarea::placeholder {
+      color: var(--text-dim);
+    }
+
+    .editor-stats {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      font-weight: 600;
       color: var(--text-muted);
-      opacity: 0.5;
+    }
+
+    .stat-item span {
+      color: var(--text-secondary);
     }
 
     /* Sidebar */
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
-    /* Alert Messages */
-    .alert {
-      padding: 1.125rem 1.5rem;
-      border-radius: 1rem;
-      font-size: 0.875rem;
-      font-weight: 700;
+    /* Config Panel */
+    .control-panel { background: var(--bg-panel); }
+
+    .config-section {
+      margin-bottom: 1rem;
+    }
+
+    .config-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-group {
+      margin-bottom: 0.875rem;
+    }
+
+    .input-label {
       display: flex;
       align-items: center;
-      gap: 0.875rem;
-      margin-bottom: 1rem;
-      border: 1px solid;
-      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: var(--shadow-md);
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .alert-success {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.4);
-      color: #34d399;
-    }
-
-    .alert-error {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.4);
-      color: #f87171;
-    }
-
-    .alert-info {
-      background: rgba(59, 130, 246, 0.12);
-      border-color: rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-    }
-
-    .alert-icon {
-      font-size: 1.125rem;
+      gap: 0.375rem;
+      font-size: 0.6875rem;
       font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.375rem;
+    }
+
+    .input-label svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all var(--transition);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-dim);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .input-grid .input-group { margin-bottom: 0; }
+
+    .hint {
+      font-size: 0.625rem;
+      color: var(--text-dim);
+      margin-top: 0.375rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .input-with-toggle { position: relative; }
+
+    .toggle-visibility {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.5625rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      transition: all var(--transition);
+    }
+
+    .toggle-visibility:hover {
+      color: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    /* Buttons */
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn {
+      padding: 0.625rem 1rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* File Info */
-    .info-grid {
-      display: grid;
-      gap: 0.875rem;
-    }
-
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.125rem;
-      background: var(--bg-secondary);
-      border-radius: 0.75rem;
-      border: 1px solid var(--border-subtle);
-      transition: all 0.2s ease;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    }
-
-    .info-item:hover {
-      border-color: rgba(59, 130, 246, 0.3);
-      background: var(--bg-tertiary);
-    }
-
-    .info-label {
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-    }
-
-    .info-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8125rem;
-      color: var(--accent-blue-light);
-      font-weight: 700;
-    }
-
-    /* Image Preview */
-    .image-preview-container {
-      margin-top: 1rem;
-      border-radius: 1rem;
+      gap: 0.5rem;
+      position: relative;
       overflow: hidden;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-secondary);
-      box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      letter-spacing: 0.02em;
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-light);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-save:hover:not(:disabled) {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-full { grid-column: 1 / -1; }
+
+    .btn .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+    }
+
+    .btn.loading .spinner { display: block; }
+    .btn.loading .btn-label { opacity: 0.6; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* File Input */
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    /* Preview Panel */
+    .image-preview-container {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-input);
     }
 
     .image-preview {
       width: 100%;
       height: auto;
       display: block;
-      max-height: 450px;
+      max-height: 500px;
       object-fit: contain;
     }
 
-    .hidden {
-      display: none !important;
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: var(--text-dim);
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
+    .empty-state-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 1rem;
+      opacity: 0.3;
+      color: var(--text-muted);
     }
 
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-      border-radius: 10px;
+    .empty-state p {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--border-subtle) 100%);
-      border-radius: 10px;
-      border: 2px solid var(--bg-secondary);
+    .empty-state .sub {
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(180deg, var(--accent-blue-dark) 0%, var(--accent-blue) 100%);
+    /* File Info */
+    .info-grid {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.625rem 0.75rem;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      transition: border-color var(--transition);
+    }
+
+    .info-item:hover {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .info-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+    }
+
+    .info-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Toast / Alert */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid;
+      animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      backdrop-filter: blur(12px);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: rgba(34, 197, 94, 0.2);
+      color: var(--accent-emerald);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.2);
+      color: var(--accent-rose);
+    }
+
+    .alert-info {
+      background: rgba(99, 102, 241, 0.08);
+      border-color: rgba(99, 102, 241, 0.2);
+      color: var(--accent-light);
+    }
+
+    .alert-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.06);
     }
 
     /* Responsive */
@@ -556,74 +699,28 @@
       .main-container {
         grid-template-columns: 1fr;
       }
-
-      .sidebar {
-        order: -1;
-      }
+      .sidebar { order: -1; }
     }
 
     @media (max-width: 768px) {
-      .header {
-        padding: 1rem;
-      }
-
-      .app-title {
-        font-size: 1.25rem;
-      }
-
-      .main-container {
-        padding: 1rem;
-        gap: 1rem;
-      }
-
-      .panel {
-        padding: 1rem;
-      }
-
-      .button-group {
-        grid-template-columns: 1fr;
-      }
-
-      .input-grid {
-        grid-template-columns: 1fr;
-      }
+      .header { padding: 0 1rem; height: 56px; }
+      .brand-text h1 { font-size: 0.9375rem; }
+      .main-container { padding: 0.75rem; gap: 0.75rem; }
+      .panel { padding: 1rem; border-radius: var(--radius-lg); }
+      .button-group { grid-template-columns: 1fr; }
+      .input-grid { grid-template-columns: 1fr; }
+      .editor-textarea { min-height: 350px; }
     }
 
-    /* Tooltip hint */
-    .hint {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 0.5rem;
-      font-weight: 600;
-      font-style: italic;
+    /* Panel Swap Transition */
+    #editorPanelHost, #previewPanelHost {
+      transition: opacity 0.15s ease;
     }
 
-    /* Token visibility toggle */
-    .input-with-toggle {
-      position: relative;
-    }
-
-    .toggle-visibility {
-      position: absolute;
-      right: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 0.5rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 0.625rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      padding: 0.375rem 0.625rem;
-      transition: all 0.2s;
-    }
-
-    .toggle-visibility:hover {
-      color: var(--accent-blue);
-      border-color: var(--accent-blue);
-      background: var(--bg-tertiary);
+    .config-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1rem 0;
     }
   </style>
 </head>
@@ -632,13 +729,29 @@
   <!-- Header -->
   <header class="header">
     <div class="header-content">
-      <div>
-        <h1 class="app-title">CLOUD NOTEPAD PRO</h1>
-        <p class="app-subtitle">Developer Edition</p>
+      <div class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="M12 18v-6"/>
+            <path d="m9 15 3-3 3 3"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Cloud Notepad Pro</h1>
+          <p>Developer Edition</p>
+        </div>
       </div>
-      <div class="status-badge">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">Not Connected</span>
+      <div class="header-actions">
+        <div class="kbd-hint">
+          <kbd class="kbd">Ctrl+S</kbd>
+          <span>Save</span>
+        </div>
+        <div class="status-badge">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Not Connected</span>
+        </div>
       </div>
     </div>
   </header>
@@ -651,17 +764,21 @@
       <div id="statusMessage"></div>
 
       <!-- Editor Panel -->
-      <div class="panel editor-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Editor</h2>
-          <span
-            style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
-            <span id="charCount">0</span> characters
-          </span>
+      <div id="editorPanelHost">
+        <div class="panel editor-panel" id="editorPanel">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              Editor
+            </h2>
+            <div class="editor-stats">
+              <span class="stat-item"><span id="charCount">0</span> chars</span>
+              <span class="stat-item"><span id="wordCount">0</span> words</span>
+              <span class="stat-item"><span id="lineCount">1</span> lines</span>
+            </div>
+          </div>
+          <textarea id="textEditor" class="editor-textarea" placeholder="Start typing your notes here...&#10;&#10;Supports plain text, code, markdown, and more.&#10;Your content will be saved to GitHub when you click Save.&#10;&#10;Keyboard shortcuts:&#10;  Ctrl+S &#8212; Save file&#10;  Ctrl+O &#8212; Load file"></textarea>
         </div>
-        <textarea id="textEditor" class="editor-textarea" placeholder="// Start typing your notes here...
-// This editor supports plain text, code, markdown, and more.
-// Your content will be saved to GitHub when you click Save."></textarea>
       </div>
     </section>
 
@@ -670,79 +787,113 @@
       <!-- Configuration Panel -->
       <div class="panel control-panel">
         <div class="panel-header">
-          <h2 class="panel-title">Configuration</h2>
+          <h2 class="panel-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Config
+          </h2>
         </div>
 
-        <div class="input-group">
-          <label class="input-label" for="githubToken">Personal Access Token</label>
-          <div class="input-with-toggle">
-            <input type="password" id="githubToken" class="input-field" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-            <button type="button" class="toggle-visibility" id="toggleToken">SHOW</button>
-          </div>
-          <p class="hint">Generate at github.com/settings/tokens with 'repo' scope</p>
-        </div>
-
-        <div class="input-grid">
+        <div class="config-section">
           <div class="input-group">
-            <label class="input-label" for="githubOwner">Owner</label>
-            <input type="text" id="githubOwner" class="input-field" placeholder="username">
+            <label class="input-label" for="githubToken">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Access Token
+            </label>
+            <div class="input-with-toggle">
+              <input type="password" id="githubToken" class="input-field" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+              <button type="button" class="toggle-visibility" id="toggleToken">SHOW</button>
+            </div>
+            <p class="hint">github.com/settings/tokens &rarr; repo scope</p>
           </div>
 
-          <div class="input-group">
-            <label class="input-label" for="githubRepo">Repository</label>
-            <input type="text" id="githubRepo" class="input-field" placeholder="my-notes">
+          <div class="input-grid">
+            <div class="input-group">
+              <label class="input-label" for="githubOwner">Owner</label>
+              <input type="text" id="githubOwner" class="input-field" placeholder="username">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="githubRepo">Repository</label>
+              <input type="text" id="githubRepo" class="input-field" placeholder="my-notes">
+            </div>
+          </div>
+
+          <div class="input-grid">
+            <div class="input-group">
+              <label class="input-label" for="githubBranch">Branch</label>
+              <input type="text" id="githubBranch" class="input-field" placeholder="main" value="main">
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="fileName">File Name</label>
+              <input type="text" id="fileName" class="input-field" placeholder="notes.txt" value="notes.txt">
+            </div>
           </div>
         </div>
 
-        <div class="input-group">
-          <label class="input-label" for="githubBranch">Branch</label>
-          <input type="text" id="githubBranch" class="input-field" placeholder="main" value="main">
-        </div>
-
-        <div class="input-group">
-          <label class="input-label" for="fileName">File Name</label>
-          <input type="text" id="fileName" class="input-field" placeholder="notes.txt" value="notes.txt">
-        </div>
+        <div class="config-divider"></div>
 
         <div class="button-group">
           <button id="loadFileBtn" class="btn btn-primary">
-            Load File
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span class="btn-label">Load File</span>
+            <span class="spinner"></span>
           </button>
           <button id="loadImageBtn" class="btn btn-primary">
-            Load Image
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <span class="btn-label">Load Image</span>
+            <span class="spinner"></span>
           </button>
           <div class="file-input-wrapper">
-            <label for="fileInput" class="btn btn-secondary" style="margin: 0; text-align: center; display: block;">
-              Choose Local
+            <label for="fileInput" class="btn btn-secondary" style="margin: 0; display: flex;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span class="btn-label">Local File</span>
             </label>
             <input type="file" id="fileInput" accept="image/*">
           </div>
-          <button id="saveFileBtn" class="btn btn-primary">
-            Save File
+          <button id="saveFileBtn" class="btn btn-save">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span class="btn-label">Save File</span>
+            <span class="spinner"></span>
           </button>
           <button id="clearTextBtn" class="btn btn-danger btn-full">
-            Clear Text
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+            <span class="btn-label">Clear All</span>
           </button>
         </div>
       </div>
 
       <!-- Preview Panel -->
-      <div class="panel" id="previewPanel">
-        <div class="panel-header">
-          <h2 class="panel-title">Preview</h2>
-        </div>
-        <div id="imagePreviewContainer" class="hidden">
-          <img id="imagePreview" class="image-preview" alt="Image preview">
-        </div>
-        <div id="noPreview" style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
-          <p style="font-size: 0.875rem;">No preview available</p>
+      <div id="previewPanelHost">
+        <div class="panel" id="previewPanel">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              Preview
+            </h2>
+          </div>
+          <div id="imagePreviewContainer" class="hidden">
+            <div class="image-preview-container">
+              <img id="imagePreview" class="image-preview" alt="Image preview">
+            </div>
+          </div>
+          <div id="noPreview" class="empty-state">
+            <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+            <p>No preview available</p>
+            <p class="sub">Load an image to see it here</p>
+          </div>
         </div>
       </div>
 
       <!-- File Info Panel -->
       <div class="panel">
         <div class="panel-header">
-          <h2 class="panel-title">File Info</h2>
+          <h2 class="panel-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            File Info
+          </h2>
         </div>
         <div class="info-grid">
           <div class="info-item">
@@ -774,7 +925,8 @@
         this.initializeElements();
         this.attachEventListeners();
         this.loadFromLocalStorage();
-        this.updateCharCount();
+        this.updateEditorStats();
+        this.updatePanelLayout();
       }
 
       initializeElements() {
@@ -798,6 +950,12 @@
           fileSize: document.getElementById('fileSize'),
           fileType: document.getElementById('fileType'),
           charCount: document.getElementById('charCount'),
+          wordCount: document.getElementById('wordCount'),
+          lineCount: document.getElementById('lineCount'),
+          editorPanel: document.getElementById('editorPanel'),
+          previewPanel: document.getElementById('previewPanel'),
+          editorPanelHost: document.getElementById('editorPanelHost'),
+          previewPanelHost: document.getElementById('previewPanelHost'),
           imagePreview: document.getElementById('imagePreview'),
           imagePreviewContainer: document.getElementById('imagePreviewContainer'),
           noPreview: document.getElementById('noPreview'),
@@ -813,19 +971,28 @@
         this.elements.clearTextBtn.addEventListener('click', () => this.clearText());
         this.elements.toggleToken.addEventListener('click', () => this.toggleTokenVisibility());
 
-        // Character counter
-        this.elements.textEditor.addEventListener('input', () => this.updateCharCount());
+        this.elements.textEditor.addEventListener('input', () => this.updateEditorStats());
 
-        // Save config to localStorage on change
         ['githubToken', 'githubOwner', 'githubRepo', 'githubBranch'].forEach(id => {
           this.elements[id].addEventListener('change', () => this.saveToLocalStorage());
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            this.saveFile();
+          }
+          if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+            e.preventDefault();
+            this.loadFile();
+          }
         });
       }
 
       toggleTokenVisibility() {
         const tokenInput = this.elements.githubToken;
         const toggleBtn = this.elements.toggleToken;
-
         if (tokenInput.type === 'password') {
           tokenInput.type = 'text';
           toggleBtn.textContent = 'HIDE';
@@ -835,9 +1002,32 @@
         }
       }
 
-      updateCharCount() {
-        const count = this.elements.textEditor.value.length;
-        this.elements.charCount.textContent = count.toLocaleString();
+      updateEditorStats() {
+        const text = this.elements.textEditor.value;
+        const chars = text.length;
+        const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+        const lines = text.split('\n').length;
+        this.elements.charCount.textContent = chars.toLocaleString();
+        this.elements.wordCount.textContent = words.toLocaleString();
+        this.elements.lineCount.textContent = lines.toLocaleString();
+      }
+
+      updatePanelLayout() {
+        if (this.currentFileType === 'image') {
+          if (this.elements.editorPanelHost.contains(this.elements.editorPanel)) {
+            this.elements.previewPanelHost.appendChild(this.elements.editorPanel);
+          }
+          if (!this.elements.editorPanelHost.contains(this.elements.previewPanel)) {
+            this.elements.editorPanelHost.appendChild(this.elements.previewPanel);
+          }
+        } else {
+          if (!this.elements.editorPanelHost.contains(this.elements.editorPanel)) {
+            this.elements.editorPanelHost.appendChild(this.elements.editorPanel);
+          }
+          if (!this.elements.previewPanelHost.contains(this.elements.previewPanel)) {
+            this.elements.previewPanelHost.appendChild(this.elements.previewPanel);
+          }
+        }
       }
 
       saveToLocalStorage() {
@@ -871,25 +1061,25 @@
       }
 
       showMessage(message, type = 'info') {
-        const icons = {
-          success: '✓',
-          error: '✕',
-          info: 'i'
-        };
-
+        const icons = { success: '\u2713', error: '\u2715', info: '\u2192' };
         const alertClass = type === 'success' ? 'alert-success' :
           type === 'error' ? 'alert-error' : 'alert-info';
 
-        this.elements.statusMessage.innerHTML = `
-                    <div class="alert ${alertClass}">
-                        <span class="alert-icon">${icons[type]}</span>
-                        <span>${message}</span>
-                    </div>
-                `;
+        this.elements.statusMessage.innerHTML =
+          '<div class="alert ' + alertClass + '">' +
+          '<span class="alert-icon">' + icons[type] + '</span>' +
+          '<span>' + message + '</span>' +
+          '</div>';
 
         setTimeout(() => {
-          this.elements.statusMessage.innerHTML = '';
-        }, 5000);
+          const alert = this.elements.statusMessage.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateY(-4px)';
+            alert.style.transition = 'all 0.3s ease';
+            setTimeout(() => { this.elements.statusMessage.innerHTML = ''; }, 300);
+          }
+        }, 4500);
       }
 
       validateConfig() {
@@ -912,18 +1102,24 @@
         return true;
       }
 
+      setButtonLoading(btn, loading) {
+        if (loading) { btn.classList.add('loading'); }
+        else { btn.classList.remove('loading'); }
+      }
+
       async loadFile() {
         if (!this.validateConfig()) return;
 
         this.setButtonsDisabled(true);
+        this.setButtonLoading(this.elements.loadFileBtn, true);
         this.showMessage('Loading file from GitHub...', 'info');
 
         try {
-          const url = `https://api.github.com/repos/${this.elements.githubOwner.value}/${this.elements.githubRepo.value}/contents/${this.elements.fileName.value}?ref=${this.elements.githubBranch.value}`;
+          const url = 'https://api.github.com/repos/' + this.elements.githubOwner.value + '/' + this.elements.githubRepo.value + '/contents/' + this.elements.fileName.value + '?ref=' + this.elements.githubBranch.value;
 
           const response = await fetch(url, {
             headers: {
-              'Authorization': `token ${this.elements.githubToken.value}`,
+              'Authorization': 'token ' + this.elements.githubToken.value,
               'Accept': 'application/vnd.github.v3+json'
             }
           });
@@ -932,7 +1128,7 @@
             if (response.status === 404) {
               throw new Error('File not found. It will be created when you save.');
             }
-            throw new Error(`GitHub API error: ${response.status}`);
+            throw new Error('GitHub API error: ' + response.status);
           }
 
           const data = await response.json();
@@ -946,7 +1142,8 @@
             this.elements.textEditor.style.display = 'none';
             this.elements.imagePreviewContainer.classList.remove('hidden');
             this.elements.noPreview.classList.add('hidden');
-            this.elements.imagePreview.src = `data:image/${fileName.split('.').pop()};base64,${data.content.replace(/\n/g, '')}`;
+            this.elements.imagePreview.src = 'data:image/' + fileName.split('.').pop() + ';base64,' + data.content.replace(/\n/g, '');
+            this.updatePanelLayout();
             this.showMessage('Image loaded successfully!', 'success');
             this.elements.fileType.textContent = 'image/' + fileName.split('.').pop();
           } else {
@@ -956,7 +1153,8 @@
             this.elements.textEditor.style.display = 'block';
             const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
             this.elements.textEditor.value = decodedContent;
-            this.updateCharCount();
+            this.updateEditorStats();
+            this.updatePanelLayout();
             this.showMessage('File loaded successfully!', 'success');
             this.elements.fileType.textContent = 'text/plain';
           }
@@ -964,21 +1162,24 @@
           this.updateFileInfo(data.size, 'Loaded');
           this.elements.lastModified.textContent = new Date().toLocaleString();
         } catch (error) {
-          this.showMessage(`Error loading file: ${error.message}`, 'error');
+          this.showMessage('Error: ' + error.message, 'error');
           this.currentSHA = null;
           this.elements.fileStatus.textContent = 'Error';
         } finally {
           this.setButtonsDisabled(false);
+          this.setButtonLoading(this.elements.loadFileBtn, false);
         }
       }
 
       async loadImage() {
         const fileName = this.elements.fileName.value.toLowerCase();
         if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(fileName)) {
-          this.showMessage('Please specify an image file name (.jpg, .png, .gif, .webp, etc.)', 'error');
+          this.showMessage('Please specify an image file (.jpg, .png, .gif, .webp, etc.)', 'error');
           return;
         }
+        this.setButtonLoading(this.elements.loadImageBtn, true);
         await this.loadFile();
+        this.setButtonLoading(this.elements.loadImageBtn, false);
       }
 
       handleLocalFile(event) {
@@ -997,6 +1198,7 @@
           this.elements.imagePreview.src = e.target.result;
           this.elements.textEditor.style.display = 'none';
           this.currentFileType = 'image';
+          this.updatePanelLayout();
           this.elements.fileType.textContent = file.type;
           this.updateFileInfo(file.size, 'Local');
           this.showMessage('Local image loaded successfully!', 'success');
@@ -1008,21 +1210,22 @@
         if (!this.validateConfig()) return;
 
         if (this.currentFileType === 'image') {
-          this.showMessage('Image saving from preview is not supported. Use GitHub to upload images directly.', 'error');
+          this.showMessage('Image saving not supported. Upload images directly via GitHub.', 'error');
           return;
         }
 
         this.setButtonsDisabled(true);
+        this.setButtonLoading(this.elements.saveFileBtn, true);
         this.showMessage('Saving file to GitHub...', 'info');
 
         try {
           const content = this.elements.textEditor.value;
           const encodedContent = btoa(unescape(encodeURIComponent(content)));
 
-          const url = `https://api.github.com/repos/${this.elements.githubOwner.value}/${this.elements.githubRepo.value}/contents/${this.elements.fileName.value}`;
+          const url = 'https://api.github.com/repos/' + this.elements.githubOwner.value + '/' + this.elements.githubRepo.value + '/contents/' + this.elements.fileName.value;
 
           const body = {
-            message: this.currentSHA ? `Update ${this.elements.fileName.value}` : `Create ${this.elements.fileName.value}`,
+            message: this.currentSHA ? 'Update ' + this.elements.fileName.value : 'Create ' + this.elements.fileName.value,
             content: encodedContent,
             branch: this.elements.githubBranch.value
           };
@@ -1034,7 +1237,7 @@
           const response = await fetch(url, {
             method: 'PUT',
             headers: {
-              'Authorization': `token ${this.elements.githubToken.value}`,
+              'Authorization': 'token ' + this.elements.githubToken.value,
               'Accept': 'application/vnd.github.v3+json',
               'Content-Type': 'application/json'
             },
@@ -1043,7 +1246,7 @@
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || `GitHub API error: ${response.status}`);
+            throw new Error(errorData.message || 'GitHub API error: ' + response.status);
           }
 
           const data = await response.json();
@@ -1053,27 +1256,30 @@
           this.updateFileInfo(data.content.size, 'Saved');
           this.elements.lastModified.textContent = new Date().toLocaleString();
         } catch (error) {
-          this.showMessage(`Error saving file: ${error.message}`, 'error');
+          this.showMessage('Error: ' + error.message, 'error');
         } finally {
           this.setButtonsDisabled(false);
+          this.setButtonLoading(this.elements.saveFileBtn, false);
         }
       }
 
       clearText() {
-        if (confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
+        if (confirm('Clear all content? This cannot be undone.')) {
           this.elements.textEditor.value = '';
           this.elements.imagePreviewContainer.classList.add('hidden');
           this.elements.noPreview.classList.remove('hidden');
           this.elements.textEditor.style.display = 'block';
           this.currentFileType = 'text';
-          this.updateCharCount();
+          this.updatePanelLayout();
+          this.updateEditorStats();
           this.showMessage('Content cleared', 'info');
           this.updateFileInfo(0, 'Cleared');
           this.elements.fileType.textContent = 'text/plain';
         }
       }
 
-      updateFileInfo(size, status = 'Unknown') {
+      updateFileInfo(size, status) {
+        status = status || 'Unknown';
         this.elements.fileSize.textContent = this.formatBytes(size);
         this.elements.fileStatus.textContent = status;
       }
@@ -1094,7 +1300,7 @@
       }
     }
 
-    // Initialize the application
+    // Initialize
     const app = new CloudNotepadPro();
   </script>
 </body>
