@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Notepad Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #000000;
+      --bg-secondary: #0a0a0f;
+      --bg-tertiary: #111118;
+      --bg-panel: #16161f;
+      --bg-elevated: #1c1c28;
+
+      --accent-blue: #2563eb;
+      --accent-blue-light: #3b82f6;
+      --accent-blue-dark: #1e40af;
+      --accent-cyan: #06b6d4;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #64748b;
+
+      --border-subtle: #1e293b;
+      --border-focus: #3b82f6;
+
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.6);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.7), 0 4px 6px -4px rgb(0 0 0 / 0.7);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.8), 0 8px 10px -6px rgb(0 0 0 / 0.8);
+      --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.2);
+      --shadow-glow-strong: 0 0 40px rgba(37, 99, 235, 0.35);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-weight: 500;
+    }
+
+    /* Glass morphism effect */
+    .glass {
+      background: rgba(22, 22, 31, 0.7);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, var(--bg-secondary) 0%, rgba(10, 10, 15, 0.95) 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 2rem 2.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .header-content {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-title {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #f8fafc 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+    }
+
+    .app-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-top: 0.375rem;
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .status-dot.connected {
+      background: var(--success);
+      box-shadow: 0 0 12px var(--success);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(0.95);
+      }
+    }
+
+    /* Main Layout */
+    .main-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      min-height: calc(100vh - 120px);
+    }
+
+    /* Editor Panel */
+    .editor-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1.25rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .panel:hover::before {
+      opacity: 1;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .panel-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-primary);
+    }
+
+    /* Control Panel */
+    .control-panel {
+      background: var(--bg-secondary);
+    }
+
+    .input-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.875rem 1.125rem;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.875rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent-blue-light);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--shadow-glow), inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+      background: var(--bg-panel);
+      transform: translateY(-1px);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Grid inputs */
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    /* Buttons */
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.875rem 1.75rem;
+      border: none;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--accent-blue-dark) 100%);
+      color: white;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      box-shadow: var(--shadow-md), 0 0 0 1px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: var(--shadow-lg), var(--shadow-glow-strong);
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-tertiary);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: var(--shadow-md), 0 0 20px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      box-shadow: var(--shadow-md), 0 0 0 1px rgba(239, 68, 68, 0.1);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-full {
+      grid-column: 1 / -1;
+    }
+
+    /* File Input Button */
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    /* Editor Textarea */
+    .editor-panel {
+      flex: 1;
+      min-height: 500px;
+    }
+
+    .editor-textarea {
+      width: 100%;
+      min-height: 500px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 0.9375rem;
+      line-height: 1.8;
+      resize: vertical;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .editor-textarea:focus {
+      outline: none;
+      border-color: var(--accent-blue-light);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12), var(--shadow-glow), inset 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+      background: var(--bg-tertiary);
+    }
+
+    .editor-textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 1.125rem 1.5rem;
+      border-radius: 1rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      margin-bottom: 1rem;
+      border: 1px solid;
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-md);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
+
+    .alert-info {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
+    }
+
+    .alert-icon {
+      font-size: 1.125rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* File Info */
+    .info-grid {
+      display: grid;
+      gap: 0.875rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.125rem;
+      background: var(--bg-secondary);
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .info-item:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: var(--bg-tertiary);
+    }
+
+    .info-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .info-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: var(--accent-blue-light);
+      font-weight: 700;
+    }
+
+    /* Image Preview */
+    .image-preview-container {
+      margin-top: 1rem;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .image-preview {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 450px;
+      object-fit: contain;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--border-subtle) 100%);
+      border-radius: 10px;
+      border: 2px solid var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, var(--accent-blue-dark) 0%, var(--accent-blue) 100%);
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 1rem;
+      }
+
+      .app-title {
+        font-size: 1.25rem;
+      }
+
+      .main-container {
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      .panel {
+        padding: 1rem;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Tooltip hint */
+    .hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    /* Token visibility toggle */
+    .input-with-toggle {
+      position: relative;
+    }
+
+    .toggle-visibility {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.5rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.625rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 0.375rem 0.625rem;
+      transition: all 0.2s;
+    }
+
+    .toggle-visibility:hover {
+      color: var(--accent-blue);
+      border-color: var(--accent-blue);
+      background: var(--bg-tertiary);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div>
+        <h1 class="app-title">CLOUD NOTEPAD PRO</h1>
+        <p class="app-subtitle">Developer Edition</p>
+      </div>
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Not Connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Editor Section -->
+    <section class="editor-section">
+      <!-- Status Messages -->
+      <div id="statusMessage"></div>
+
+      <!-- Editor Panel -->
+      <div class="panel editor-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Editor</h2>
+          <span
+            style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
+            <span id="charCount">0</span> characters
+          </span>
+        </div>
+        <textarea id="textEditor" class="editor-textarea" placeholder="// Start typing your notes here...
+// This editor supports plain text, code, markdown, and more.
+// Your content will be saved to GitHub when you click Save."></textarea>
+      </div>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- Configuration Panel -->
+      <div class="panel control-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Configuration</h2>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="githubToken">Personal Access Token</label>
+          <div class="input-with-toggle">
+            <input type="password" id="githubToken" class="input-field" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+            <button type="button" class="toggle-visibility" id="toggleToken">SHOW</button>
+          </div>
+          <p class="hint">Generate at github.com/settings/tokens with 'repo' scope</p>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-group">
+            <label class="input-label" for="githubOwner">Owner</label>
+            <input type="text" id="githubOwner" class="input-field" placeholder="username">
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="githubRepo">Repository</label>
+            <input type="text" id="githubRepo" class="input-field" placeholder="my-notes">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="githubBranch">Branch</label>
+          <input type="text" id="githubBranch" class="input-field" placeholder="main" value="main">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="fileName">File Name</label>
+          <input type="text" id="fileName" class="input-field" placeholder="notes.txt" value="notes.txt">
+        </div>
+
+        <div class="button-group">
+          <button id="loadFileBtn" class="btn btn-primary">
+            Load File
+          </button>
+          <button id="loadImageBtn" class="btn btn-primary">
+            Load Image
+          </button>
+          <div class="file-input-wrapper">
+            <label for="fileInput" class="btn btn-secondary" style="margin: 0; text-align: center; display: block;">
+              Choose Local
+            </label>
+            <input type="file" id="fileInput" accept="image/*">
+          </div>
+          <button id="saveFileBtn" class="btn btn-primary">
+            Save File
+          </button>
+          <button id="clearTextBtn" class="btn btn-danger btn-full">
+            Clear Text
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="panel" id="previewPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">Preview</h2>
+        </div>
+        <div id="imagePreviewContainer" class="hidden">
+          <img id="imagePreview" class="image-preview" alt="Image preview">
+        </div>
+        <div id="noPreview" style="text-align: center; color: var(--text-muted); padding: 2rem 1rem;">
+          <p style="font-size: 0.875rem;">No preview available</p>
+        </div>
+      </div>
+
+      <!-- File Info Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">File Info</h2>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Status</span>
+            <span class="info-value" id="fileStatus">Not Loaded</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Size</span>
+            <span class="info-value" id="fileSize">0 B</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Type</span>
+            <span class="info-value" id="fileType">text/plain</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Modified</span>
+            <span class="info-value" id="lastModified">Never</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    class CloudNotepadPro {
+      constructor() {
+        this.currentSHA = null;
+        this.currentFileType = 'text';
+        this.initializeElements();
+        this.attachEventListeners();
+        this.loadFromLocalStorage();
+        this.updateCharCount();
+      }
+
+      initializeElements() {
+        this.elements = {
+          githubToken: document.getElementById('githubToken'),
+          githubOwner: document.getElementById('githubOwner'),
+          githubRepo: document.getElementById('githubRepo'),
+          githubBranch: document.getElementById('githubBranch'),
+          fileName: document.getElementById('fileName'),
+          textEditor: document.getElementById('textEditor'),
+          loadFileBtn: document.getElementById('loadFileBtn'),
+          loadImageBtn: document.getElementById('loadImageBtn'),
+          fileInput: document.getElementById('fileInput'),
+          saveFileBtn: document.getElementById('saveFileBtn'),
+          clearTextBtn: document.getElementById('clearTextBtn'),
+          statusMessage: document.getElementById('statusMessage'),
+          statusDot: document.getElementById('statusDot'),
+          statusText: document.getElementById('statusText'),
+          fileStatus: document.getElementById('fileStatus'),
+          lastModified: document.getElementById('lastModified'),
+          fileSize: document.getElementById('fileSize'),
+          fileType: document.getElementById('fileType'),
+          charCount: document.getElementById('charCount'),
+          imagePreview: document.getElementById('imagePreview'),
+          imagePreviewContainer: document.getElementById('imagePreviewContainer'),
+          noPreview: document.getElementById('noPreview'),
+          toggleToken: document.getElementById('toggleToken')
+        };
+      }
+
+      attachEventListeners() {
+        this.elements.loadFileBtn.addEventListener('click', () => this.loadFile());
+        this.elements.loadImageBtn.addEventListener('click', () => this.loadImage());
+        this.elements.fileInput.addEventListener('change', (e) => this.handleLocalFile(e));
+        this.elements.saveFileBtn.addEventListener('click', () => this.saveFile());
+        this.elements.clearTextBtn.addEventListener('click', () => this.clearText());
+        this.elements.toggleToken.addEventListener('click', () => this.toggleTokenVisibility());
+
+        // Character counter
+        this.elements.textEditor.addEventListener('input', () => this.updateCharCount());
+
+        // Save config to localStorage on change
+        ['githubToken', 'githubOwner', 'githubRepo', 'githubBranch'].forEach(id => {
+          this.elements[id].addEventListener('change', () => this.saveToLocalStorage());
+        });
+      }
+
+      toggleTokenVisibility() {
+        const tokenInput = this.elements.githubToken;
+        const toggleBtn = this.elements.toggleToken;
+
+        if (tokenInput.type === 'password') {
+          tokenInput.type = 'text';
+          toggleBtn.textContent = 'HIDE';
+        } else {
+          tokenInput.type = 'password';
+          toggleBtn.textContent = 'SHOW';
+        }
+      }
+
+      updateCharCount() {
+        const count = this.elements.textEditor.value.length;
+        this.elements.charCount.textContent = count.toLocaleString();
+      }
+
+      saveToLocalStorage() {
+        localStorage.setItem('github_token', this.elements.githubToken.value);
+        localStorage.setItem('github_owner', this.elements.githubOwner.value);
+        localStorage.setItem('github_repo', this.elements.githubRepo.value);
+        localStorage.setItem('github_branch', this.elements.githubBranch.value);
+        this.updateConnectionStatus();
+      }
+
+      loadFromLocalStorage() {
+        this.elements.githubToken.value = localStorage.getItem('github_token') || '';
+        this.elements.githubOwner.value = localStorage.getItem('github_owner') || '';
+        this.elements.githubRepo.value = localStorage.getItem('github_repo') || '';
+        this.elements.githubBranch.value = localStorage.getItem('github_branch') || 'main';
+        this.updateConnectionStatus();
+      }
+
+      updateConnectionStatus() {
+        const isConfigured = this.elements.githubToken.value &&
+          this.elements.githubOwner.value &&
+          this.elements.githubRepo.value;
+
+        if (isConfigured) {
+          this.elements.statusDot.classList.add('connected');
+          this.elements.statusText.textContent = 'Connected';
+        } else {
+          this.elements.statusDot.classList.remove('connected');
+          this.elements.statusText.textContent = 'Not Connected';
+        }
+      }
+
+      showMessage(message, type = 'info') {
+        const icons = {
+          success: '✓',
+          error: '✕',
+          info: 'i'
+        };
+
+        const alertClass = type === 'success' ? 'alert-success' :
+          type === 'error' ? 'alert-error' : 'alert-info';
+
+        this.elements.statusMessage.innerHTML = `
+                    <div class="alert ${alertClass}">
+                        <span class="alert-icon">${icons[type]}</span>
+                        <span>${message}</span>
+                    </div>
+                `;
+
+        setTimeout(() => {
+          this.elements.statusMessage.innerHTML = '';
+        }, 5000);
+      }
+
+      validateConfig() {
+        if (!this.elements.githubToken.value) {
+          this.showMessage('Please enter your GitHub Personal Access Token', 'error');
+          return false;
+        }
+        if (!this.elements.githubOwner.value) {
+          this.showMessage('Please enter the repository owner', 'error');
+          return false;
+        }
+        if (!this.elements.githubRepo.value) {
+          this.showMessage('Please enter the repository name', 'error');
+          return false;
+        }
+        if (!this.elements.fileName.value) {
+          this.showMessage('Please enter a file name', 'error');
+          return false;
+        }
+        return true;
+      }
+
+      async loadFile() {
+        if (!this.validateConfig()) return;
+
+        this.setButtonsDisabled(true);
+        this.showMessage('Loading file from GitHub...', 'info');
+
+        try {
+          const url = `https://api.github.com/repos/${this.elements.githubOwner.value}/${this.elements.githubRepo.value}/contents/${this.elements.fileName.value}?ref=${this.elements.githubBranch.value}`;
+
+          const response = await fetch(url, {
+            headers: {
+              'Authorization': `token ${this.elements.githubToken.value}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              throw new Error('File not found. It will be created when you save.');
+            }
+            throw new Error(`GitHub API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          this.currentSHA = data.sha;
+
+          const fileName = this.elements.fileName.value.toLowerCase();
+          const isImage = /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(fileName);
+
+          if (isImage) {
+            this.currentFileType = 'image';
+            this.elements.textEditor.style.display = 'none';
+            this.elements.imagePreviewContainer.classList.remove('hidden');
+            this.elements.noPreview.classList.add('hidden');
+            this.elements.imagePreview.src = `data:image/${fileName.split('.').pop()};base64,${data.content.replace(/\n/g, '')}`;
+            this.showMessage('Image loaded successfully!', 'success');
+            this.elements.fileType.textContent = 'image/' + fileName.split('.').pop();
+          } else {
+            this.currentFileType = 'text';
+            this.elements.imagePreviewContainer.classList.add('hidden');
+            this.elements.noPreview.classList.remove('hidden');
+            this.elements.textEditor.style.display = 'block';
+            const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+            this.elements.textEditor.value = decodedContent;
+            this.updateCharCount();
+            this.showMessage('File loaded successfully!', 'success');
+            this.elements.fileType.textContent = 'text/plain';
+          }
+
+          this.updateFileInfo(data.size, 'Loaded');
+          this.elements.lastModified.textContent = new Date().toLocaleString();
+        } catch (error) {
+          this.showMessage(`Error loading file: ${error.message}`, 'error');
+          this.currentSHA = null;
+          this.elements.fileStatus.textContent = 'Error';
+        } finally {
+          this.setButtonsDisabled(false);
+        }
+      }
+
+      async loadImage() {
+        const fileName = this.elements.fileName.value.toLowerCase();
+        if (!/\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(fileName)) {
+          this.showMessage('Please specify an image file name (.jpg, .png, .gif, .webp, etc.)', 'error');
+          return;
+        }
+        await this.loadFile();
+      }
+
+      handleLocalFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+          this.showMessage('Please select an image file', 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.elements.imagePreviewContainer.classList.remove('hidden');
+          this.elements.noPreview.classList.add('hidden');
+          this.elements.imagePreview.src = e.target.result;
+          this.elements.textEditor.style.display = 'none';
+          this.currentFileType = 'image';
+          this.elements.fileType.textContent = file.type;
+          this.updateFileInfo(file.size, 'Local');
+          this.showMessage('Local image loaded successfully!', 'success');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async saveFile() {
+        if (!this.validateConfig()) return;
+
+        if (this.currentFileType === 'image') {
+          this.showMessage('Image saving from preview is not supported. Use GitHub to upload images directly.', 'error');
+          return;
+        }
+
+        this.setButtonsDisabled(true);
+        this.showMessage('Saving file to GitHub...', 'info');
+
+        try {
+          const content = this.elements.textEditor.value;
+          const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+          const url = `https://api.github.com/repos/${this.elements.githubOwner.value}/${this.elements.githubRepo.value}/contents/${this.elements.fileName.value}`;
+
+          const body = {
+            message: this.currentSHA ? `Update ${this.elements.fileName.value}` : `Create ${this.elements.fileName.value}`,
+            content: encodedContent,
+            branch: this.elements.githubBranch.value
+          };
+
+          if (this.currentSHA) {
+            body.sha = this.currentSHA;
+          }
+
+          const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${this.elements.githubToken.value}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `GitHub API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          this.currentSHA = data.content.sha;
+
+          this.showMessage('File saved successfully!', 'success');
+          this.updateFileInfo(data.content.size, 'Saved');
+          this.elements.lastModified.textContent = new Date().toLocaleString();
+        } catch (error) {
+          this.showMessage(`Error saving file: ${error.message}`, 'error');
+        } finally {
+          this.setButtonsDisabled(false);
+        }
+      }
+
+      clearText() {
+        if (confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
+          this.elements.textEditor.value = '';
+          this.elements.imagePreviewContainer.classList.add('hidden');
+          this.elements.noPreview.classList.remove('hidden');
+          this.elements.textEditor.style.display = 'block';
+          this.currentFileType = 'text';
+          this.updateCharCount();
+          this.showMessage('Content cleared', 'info');
+          this.updateFileInfo(0, 'Cleared');
+          this.elements.fileType.textContent = 'text/plain';
+        }
+      }
+
+      updateFileInfo(size, status = 'Unknown') {
+        this.elements.fileSize.textContent = this.formatBytes(size);
+        this.elements.fileStatus.textContent = status;
+      }
+
+      formatBytes(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+      }
+
+      setButtonsDisabled(disabled) {
+        this.elements.loadFileBtn.disabled = disabled;
+        this.elements.loadImageBtn.disabled = disabled;
+        this.elements.saveFileBtn.disabled = disabled;
+        this.elements.clearTextBtn.disabled = disabled;
+      }
+    }
+
+    // Initialize the application
+    const app = new CloudNotepadPro();
+  </script>
+</body>
+
+</html>
